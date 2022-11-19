@@ -10,9 +10,11 @@
 * sklearn: used for evaluation metrics and the train/test split 
 * matplotlib: to visualise images 
 
-## Data
+## Data 
 
-## LSTM Model
+## LSTM Model 
+
+## Interface 
 
 ## Evaluation
 
