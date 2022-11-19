@@ -10,6 +10,7 @@ mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 
 
+# Detects landmarks with mediapipe holistic model
 def mediapipe_detection(image, holistic_model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     #image.flags.writable = False
@@ -19,6 +20,7 @@ def mediapipe_detection(image, holistic_model):
     return image, results
 
 
+# Draws landmarks on the camera feed 
 def draw_landmarks(image, results):
     mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION,\
         mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),\
@@ -34,10 +36,21 @@ def draw_landmarks(image, results):
             mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
 
+# Extracts landmarks results and saves to flattened arrays
+def extract_keypoints():
+    pose = np.array([result.x, result.y, result.z, result.visibility] for result in results.pose_landmarks.landmark).flatten()\
+    if results.pose_landmarks else np.zeros(33*4)
+    face = np.array([result.x, result.y, result.z] for result in results.face_landmarks.landmark).flatten()\
+    if results.face_landmarks else np.zeros(468*3)
+    lh = np.array([result.x, result.y, result.z] for result in results.left_hand_landmarks.landmark).flatten()\
+    if results.left_hand_landmarks else np.zeros(21*3)
+    rh = np.array([result.x, result.y, result.z] for result in results.right_hand_landmarks.landmark).flatten()\
+    if results.right_hand_landmarks else np.zeros(21*3)
+    return np.concatenate([pose, face, lh, rh])
 
-# accessing webcam, looping through the frames in video feed and displaying them 
+
+# accesses webcam and loops through the frames in video feed to display them 
 cap = cv2.VideoCapture(0)
-#  Set Mediapipe model 
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic_model:
     while cap.isOpened():
         ret, frame = cap.read()
@@ -48,6 +61,4 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             break
 cap.release()
 cv2.destroyAllWindows()
-
-
 
