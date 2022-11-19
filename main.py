@@ -8,6 +8,10 @@ import mediapipe as mp
 
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
+DATA_PATH = os.path.join("MP_Data")
+actions = np.array(["hello", "thanks", "I love you"])
+no_sequences = 30
+sequence_length = 30
 
 
 # Detects landmarks with mediapipe holistic model
